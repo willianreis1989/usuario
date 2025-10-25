@@ -15,7 +15,6 @@ import com.javanauta.usuario.insfrastructure.repository.TelefoneRepository;
 import com.javanauta.usuario.insfrastructure.repository.UsuarioRepository;
 import com.javanauta.usuario.insfrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -115,6 +114,30 @@ public class UsuarioService {
 
     }
 
+    public EnderecoDTO cadastraEndereco(String token, EnderecoDTO dto){
+        String email = jwtUtil.extrairEmailToken(token.substring(7));
+        Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() ->
+                new ResourceNotFoundException("Email não localizado" + email));
+
+        Endereco endereco = usuarioConverter.paraEnderecoEntity(dto, usuario.getId());
+        Endereco enderecoEntity = enderecoRepository.save(endereco);
+
+        return usuarioConverter.paraEnderecoDTO(enderecoEntity);
+
+        }
+
+        public TelefoneDTO cadastraTelefone(String token, TelefoneDTO dto){
+            String email = jwtUtil.extrairEmailToken(token.substring(7));
+            Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() ->
+                    new ResourceNotFoundException("Email não localizado" + email));
+
+            Telefone telefone = usuarioConverter.paraTelefoneEntity(dto, usuario.getId());
+            Telefone telefoneEntity = telefoneRepository.save(telefone);
+
+            return usuarioConverter.paraTelefoneDTO(telefoneEntity);
+
+
+        }
 
 
 
